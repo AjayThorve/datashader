@@ -20,9 +20,10 @@ except ImportError:
     RaggedDtype = type(None)
 
 try:
-    import cudf
+    import cudf, cupy
 except Exception:
     cudf = None
+    cupy = None
 
 try:
     from spatialpandas.geometry import GeometryDtype
@@ -156,6 +157,8 @@ def nansum_missing(array, axis):
     array: Array to sum over
     axis:  Axis to sum over
     """
+    if cupy is not None and isinstance(array, cupy.core.core.ndarray):
+        return array.sum(axis=axis)
     T = list(range(array.ndim))
     T.remove(axis)
     T.insert(0, axis)
@@ -429,8 +432,13 @@ def dshape_from_pandas_helper(col):
     if (isinstance(col.dtype, type(pd.Categorical.dtype)) or
             isinstance(col.dtype, pd.api.types.CategoricalDtype) or
             cudf and isinstance(col.dtype, cudf.core.dtypes.CategoricalDtype)):
-        # Compute category dtype
-        categories = np.array(col.cat.categories)
+        if cudf and isinstance(col.dtype, cudf.core.dtypes.CategoricalDtype):
+            # Compute category dtype
+            categories = col.cat.categories.to_array()
+        else:
+            # Compute category dtype
+            categories = np.array(col.cat.categories)
+
         if categories.dtype.kind == 'U':
             categories = categories.astype('object')
 
