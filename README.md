@@ -4,6 +4,7 @@
 
 # Turn even the largest data into images, accurately
 
+### Custom branch cudf_0.14 -> temporary install source for cuxfilter until datashader implements changes related to compatibility issues with cudf-0.13+
 |    |    |
 | --- | --- |
 | Build Status | [![Linux/MacOS Build Status](https://travis-ci.org/holoviz/datashader.svg?branch=master)](https://travis-ci.org/holoviz/datashader) [![Windows Build status](https://img.shields.io/appveyor/ci/holoviz-developers/datashader/master.svg?logo=appveyor)](https://ci.appveyor.com/project/holoviz-developers/datashader/branch/master) |
