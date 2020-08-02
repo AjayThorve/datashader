@@ -200,8 +200,10 @@ def _normalize_interpolate_how(how):
 def _interpolate(agg, cmap, how, alpha, span, min_alpha, name):
     if cupy and isinstance(agg.data, cupy.ndarray):
         from ._cuda_utils import masked_clip_2d, interp
+        array_module = cupy
     else:
         from ._cpu_utils import masked_clip_2d
+        array_module = np
         interp = np.interp
 
     if agg.ndim != 2:
@@ -228,9 +230,9 @@ def _interpolate(agg, cmap, how, alpha, span, min_alpha, name):
 
     # Handle offset / clip
     if span is None:
-        offset = np.nanmin(data[~mask])
+        offset = array_module.nanmin(data[~mask])
     else:
-        offset = np.array(span, dtype=data.dtype)[0]
+        offset = array_module.array(span, dtype=data.dtype)[0]
         masked_clip_2d(data, mask, *span)
 
     # If log/cbrt, could case to float64 right away
